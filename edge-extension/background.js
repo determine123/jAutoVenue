@@ -15,7 +15,7 @@ chrome.runtime.onMessage.addListener((m,sender,reply)=>{
    const old=baselines[key];baselines[key]=d.count;await chrome.storage.local.set({baselines,lastResult:d,status:d.count?'页面显示有空位':'页面显示无空位'});
    if((old===undefined&&preferences.firstAvailable&&d.count>0)||(old===0&&d.count>0)){await log(`${key}：页面显示 ${d.count} 个可选场地`);await alert(d);}
   }
-  if(m.type==='status'){if(!sender.tab?.url?.startsWith('https://sports.sjtu.edu.cn/pc/'))throw Error('来源错误');await chrome.storage.local.set({status:m.message});}
+  if(m.type==='status'){if(!sender.tab?.url?.startsWith('https://sports.sjtu.edu.cn/pc/'))throw Error('来源错误');const {preferences=defaults}=await chrome.storage.local.get('preferences');if(preferences.watch&&sender.tab.id===preferences.watchTabId)await chrome.storage.local.set({status:m.message});}
   if(m.type==='result'){await chrome.storage.local.set({lastResult:m.data,status:'读取成功'});await log(`${m.data.venue} ${m.data.item} ${m.data.date} ${m.data.start}：${m.data.count} 个可选场地`);}
   if(m.type==='test')await alert(null,true);
   if(m.type==='ack')await ack();
