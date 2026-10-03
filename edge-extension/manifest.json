@@ -1,0 +1,37 @@
+{
+  "manifest_version": 3,
+  "name": "SJTU 体育场馆预约助手",
+  "version": "1.0.0",
+  "description": "保存预约偏好、准备场次、查看空位并提醒；订单和付款由用户确认。",
+  "minimum_chrome_version": "120",
+  "permissions": [
+    "storage",
+    "notifications",
+    "offscreen"
+  ],
+  "host_permissions": [
+    "https://sports.sjtu.edu.cn/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "icon.png"
+  },
+  "icons": {
+    "128": "icon.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://sports.sjtu.edu.cn/pc/*"
+      ],
+      "js": [
+        "core.js",
+        "content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}
