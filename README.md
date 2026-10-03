@@ -6,3 +6,8 @@
 
 原 Python 文件仅保留历史参考，请勿直接运行 sport.py：它使用过时 Selenium API、eval 参数解析、明文密码配置和旧下单支付逻辑。
 原说明已保存在 README.legacy.md。
+
+
+## 原仓库与来源
+
+本仓库基于 [ifarewell/jAutoVenue](https://github.com/ifarewell/jAutoVenue)，保留原项目提交历史。本账号提供本地部署改进及 Edge 扩展；原作者与本地修改的来源分别注明，使用时遵守上游许可及平台规则。
