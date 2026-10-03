@@ -7,7 +7,7 @@ async function ack(){await audio(false);await chrome.notifications.clear('availa
 chrome.runtime.onMessage.addListener((m,sender,reply)=>{
  if(['sound','silence'].includes(m.type))return;
  queue=queue.then(async()=>{
-  if(m.type==='save'){await chrome.storage.local.set({preferences:{...defaults,...m.preferences}});if(!m.preferences.watch||!m.preferences.sound)await ack();await log(m.preferences.watch?'页面空位提醒已启用':'页面空位提醒已关闭');}
+  if(m.type==='save'){const {preferences:old=defaults}=await chrome.storage.local.get('preferences');const next={...defaults,...m.preferences};const context=p=>[p.venue,p.item,p.date,p.time,p.site||'',p.watchTabId].join('|');if(next.watch&&(!old.watch||context(old)!==context(next)))await chrome.storage.local.set({baselines:{},lastResult:null,status:'等待目标页面重新读取'});await chrome.storage.local.set({preferences:next});if(!m.preferences.watch||!m.preferences.sound)await ack();await log(m.preferences.watch?'页面空位提醒已启用':'页面空位提醒已关闭');}
   if(m.type==='availability'){
    if(!sender.tab?.url?.startsWith('https://sports.sjtu.edu.cn/pc/'))throw Error('来源错误');
    const {preferences=defaults,baselines={}}=await chrome.storage.local.get(['preferences','baselines']);if(!preferences.watch||sender.tab.id!==preferences.watchTabId)return {ok:true};
