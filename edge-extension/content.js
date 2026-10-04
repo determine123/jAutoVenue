@@ -19,8 +19,14 @@ function snapshot(p,highlight=false){const data=VenueCore.read(document,p);if(hi
 async function watch(){
  if(busy)return;
  const {preferences}=await chrome.storage.local.get('preferences');if(!preferences?.watch)return;
- try{const data=snapshot(preferences);const signature=JSON.stringify([data.venue,data.item,data.date,data.start,data.slots]);if(signature!==lastSignature){lastSignature=signature;await chrome.runtime.sendMessage({type:'availability',data});}}
- catch(e){const signature='error:'+e.message;if(signature!==lastSignature){lastSignature=signature;await chrome.runtime.sendMessage({type:'status',message:e.message});}}
+ let message,signature;
+ try{const data=snapshot(preferences);signature=JSON.stringify([data.venue,data.item,data.date,data.start,data.slots]);message={type:'availability',data};}
+ catch(e){signature='error:'+e.message;message={type:'status',message:e.message};}
+ if(signature===lastSignature)return;
+ // A failed delivery must remain retryable even if the page has not changed.
+ const reply=await chrome.runtime.sendMessage(message);
+ if(!reply?.ok)throw Error(reply?.error||'后台未确认消息');
+ lastSignature=signature;
 }
 chrome.runtime.onMessage.addListener((m,sender,reply)=>{
  if(!['prepare','read','catalog','watchNow'].includes(m.type))return;
