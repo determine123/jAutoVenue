@@ -43,6 +43,10 @@
 尚未在用户Edge中验证扩展实际加载、通知音频送达及其他场馆的布局；如布局变化，助手会报错，需要适配。
 
 ## 更新
+仓库的 GitHub Actions 在测试通过后生成 `sjtu-venue-helper-版本号.zip`。登录 GitHub，打开成功的“Extension regression tests”运行，在 Artifacts 下载该文件。解压后选择其中的 `edge-extension` 目录加载，不要直接选择 ZIP。构建产物有保留期限，过期时仍可下载仓库源码安装。
+
+维护者可在仓库根目录运行 `python tools/package_extension.py`，产物位于 `dist/`。脚本检查必需资源，并仅打包扩展文件，不包含历史 Python 配置、登录会话或本地日志。
+
 重新运行安装助手将文件复制到固定目录后，在 Edge 扩展页点击重新加载。
 仅包含扩展源码，不包含登录会话、推送密钥或个人数据。
 
