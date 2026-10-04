@@ -14,7 +14,7 @@
 
 ## 安装
 1. 在 Edge 打开 edge://extensions，开启开发人员模式。
-2. 点击“加载解压缩的扩展”，选择本 README 所在的 edge-venue-helper 文件夹（含 manifest.json）。
+2. 点击“加载解压缩的扩展”，选择本 README 所在的 edge-extension 文件夹（含 manifest.json）。
 3. 固定工具栏上的“SJTU 体育场馆预约助手”。这是独立扩展，不会覆盖签到提醒扩展。
 4. 初次安装后，刷新此前已打开的体育场馆平台标签，使页面脚本加载。
 
