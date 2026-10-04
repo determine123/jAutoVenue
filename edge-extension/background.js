@@ -3,7 +3,7 @@ const defaults={venue:'',item:'',date:'',time:'20:00',site:'',watch:false,sound:
 async function log(message){const {logs=[]}=await chrome.storage.local.get('logs');logs.unshift({time:Date.now(),message});await chrome.storage.local.set({logs:logs.slice(0,200)});}
 async function audio(on){if(on&&!await chrome.offscreen.hasDocument()){making ||= chrome.offscreen.createDocument({url:'offscreen.html',reasons:['AUDIO_PLAYBACK'],justification:'Play availability alert until acknowledged'}).finally(()=>making=null);await making;}if(await chrome.offscreen.hasDocument())await chrome.runtime.sendMessage({type:on?'sound':'silence'});}
 async function alert(data,test=false){const {preferences=defaults}=await chrome.storage.local.get('preferences');await chrome.storage.local.set({pending:true});try{await chrome.notifications.create('availability',{type:'basic',iconUrl:'icon.png',title:test?'体育场馆助手测试':`${data.venue} · ${data.item} 有空位`,message:test?'请确认通知与声音，点击已收到停止。':`${data.date} ${data.start}–${data.end}\n可选 ${data.count} 个场地，请在平台自行选择并下单。`,requireInteraction:true,buttons:[{title:'已收到'},{title:'打开平台'}]});}catch{await log('桌面通知发送失败');}if(preferences.sound)try{await audio(true);}catch{await log('声音播放失败');}}
-async function ack(){await audio(false);await chrome.notifications.clear('availability');await chrome.storage.local.set({pending:false});}
+async function ack(){try{await audio(false);}catch{await log('声音停止失败，请检查扩展音频页面');}await chrome.notifications.clear('availability');await chrome.storage.local.set({pending:false});}
 chrome.runtime.onMessage.addListener((m,sender,reply)=>{
  if(['sound','silence'].includes(m.type))return;
  queue=queue.then(async()=>{
