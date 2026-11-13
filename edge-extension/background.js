@@ -35,4 +35,10 @@ chrome.runtime.onMessage.addListener((m,sender,reply)=>{
 chrome.notifications.onButtonClicked.addListener((id,i)=>{if(id!=='availability')return;queue=queue.then(async()=>{if(i===1)await chrome.tabs.create({url});await ack()}).catch(()=>{})});
 chrome.notifications.onClosed.addListener((id,byUser)=>{if(id==='availability'&&byUser)queue=queue.then(ack).catch(()=>{})});
 
-chrome.runtime.onStartup.addListener(async()=>{const {preferences}=await chrome.storage.local.get('preferences');if(preferences?.watch)await chrome.storage.local.set({preferences:{...preferences,watch:false},status:'浏览器重启，请在目标标签重新启用空位提醒'});});
+chrome.runtime.onStartup.addListener(()=>{
+ queue=queue.then(async()=>{
+  const {preferences}=await chrome.storage.local.get('preferences');
+  await chrome.storage.local.set({...(preferences?{preferences:{...preferences,watch:false}}:{}),baselines:{},lastResult:null,status:'浏览器重启，请在目标标签重新读取或启用空位提醒'});
+  await ack();
+ }).catch(e=>log('启动清理失败：'+e.message));
+});
